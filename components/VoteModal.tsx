@@ -28,6 +28,7 @@ interface VoteData {
   scenery: number
   routeVariety: number
   priceValue: number
+  comment: string
 }
 
 export function VoteModal({ race, onClose, onVoteSubmitted }: VoteModalProps) {
@@ -44,6 +45,7 @@ export function VoteModal({ race, onClose, onVoteSubmitted }: VoteModalProps) {
     scenery: 3,
     routeVariety: 3,
     priceValue: 3,
+    comment: '',
   })
   
   const [loading, setLoading] = useState(false)
@@ -265,6 +267,22 @@ export function VoteModal({ race, onClose, onVoteSubmitted }: VoteModalProps) {
                   onChange={(value) => updateRating('priceValue', value)}
                   label="Rapport qualité-prix"
                 />
+              </div>
+
+              {/* Commentaire */}
+              <div className="mt-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Commentaire (optionnel)</h3>
+                <textarea
+                  value={voteData.comment}
+                  onChange={(e) => setVoteData(prev => ({ ...prev, comment: e.target.value }))}
+                  placeholder="Partagez votre expérience, vos conseils ou remarques sur cette cyclosportive..."
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                  rows={4}
+                  maxLength={500}
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  {voteData.comment.length}/500 caractères
+                </p>
               </div>
             </div>
 

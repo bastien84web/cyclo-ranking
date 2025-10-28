@@ -19,6 +19,7 @@ const voteSchema = z.object({
   scenery: z.number().min(1).max(5),
   routeVariety: z.number().min(1).max(5),
   priceValue: z.number().min(1).max(5),
+  comment: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {

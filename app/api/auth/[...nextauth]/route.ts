@@ -37,6 +37,11 @@ const handler = NextAuth({
           return null
         }
 
+        // Vérifier si l'email est vérifié (temporairement désactivé pour les tests)
+        // if (!user.emailVerified) {
+        //   throw new Error('Veuillez vérifier votre email avant de vous connecter')
+        // }
+
         return {
           id: user.id,
           email: user.email,

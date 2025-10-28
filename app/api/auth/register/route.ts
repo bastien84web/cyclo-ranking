@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { sendVerificationEmail, generateVerificationToken } from '@/lib/email'
 
 const prisma = new PrismaClient()
 
@@ -30,6 +31,9 @@ export async function POST(request: NextRequest) {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
+    
+    // Generate verification token
+    const verificationToken = generateVerificationToken()
 
     // Create user
     const user = await prisma.user.create({
@@ -37,16 +41,25 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
+        verificationToken,
       }
     })
 
+    // Send verification email
+    const emailSent = await sendVerificationEmail(email, verificationToken)
+    
+    if (!emailSent) {
+      console.warn('Échec de l\'envoi de l\'email de vérification pour:', email)
+    }
+
     return NextResponse.json({
-      message: 'Utilisateur créé avec succès',
+      message: 'Compte créé avec succès ! Vérifiez votre email pour activer votre compte.',
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-      }
+      },
+      emailSent
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
