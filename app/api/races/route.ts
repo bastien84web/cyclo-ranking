@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     const race = await prisma.race.create({
       data: {
         name,
-        description,
+        description: description || null,
         location,
         date,
         website: website || null,
