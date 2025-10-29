@@ -7,8 +7,29 @@ import { Navigation } from '@/components/Navigation'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Cyclo Ranking - Classement des Courses Cyclosportives',
-  description: 'Votez et classez vos courses cyclosportives préférées',
+  title: 'Meilleures Cyclosportives - Classement et Avis des Courses 2025',
+  description: 'Découvrez le classement des meilleures cyclosportives de France. Plus de 100 courses notées par les cyclistes : La Marmotte, L\'Étape du Tour, L\'Ardéchoise. Votez et partagez vos avis !',
+  keywords: 'cyclosportives, classement cyclosportives, meilleures cyclosportives France, La Marmotte, Étape du Tour, Ardéchoise, courses cyclistes, vélo, cyclisme',
+  authors: [{ name: 'Meilleures Cyclosportives' }],
+  creator: 'Meilleures Cyclosportives',
+  publisher: 'Meilleures Cyclosportives',
+  robots: 'index, follow',
+  openGraph: {
+    title: 'Meilleures Cyclosportives - Classement des Courses 2025',
+    description: 'Découvrez le classement des meilleures cyclosportives de France. Plus de 100 courses notées par les cyclistes.',
+    url: 'https://meilleures-cyclosportives.com',
+    siteName: 'Meilleures Cyclosportives',
+    locale: 'fr_FR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Meilleures Cyclosportives - Classement des Courses 2025',
+    description: 'Découvrez le classement des meilleures cyclosportives de France. Plus de 100 courses notées par les cyclistes.',
+  },
+  alternates: {
+    canonical: 'https://meilleures-cyclosportives.com',
+  },
 }
 
 export default function RootLayout({

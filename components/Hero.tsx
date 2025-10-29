@@ -6,10 +6,10 @@ export function Hero() {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Classement des Courses Cyclosportives
+            Meilleures Cyclosportives de France 2025
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-primary-100">
-            Votez et découvrez les meilleures courses cyclosportives
+            Découvrez le classement des 102 meilleures cyclosportives : La Marmotte, L'Étape du Tour, L'Ardéchoise et bien plus
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
