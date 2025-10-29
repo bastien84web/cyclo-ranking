@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
-
 export async function GET() {
+  let prisma: PrismaClient | null = null
+  
   try {
     // Vérifier les variables d'environnement
     const envCheck = {
@@ -20,6 +20,15 @@ export async function GET() {
     let adminExists = false
 
     try {
+      // Créer une nouvelle instance Prisma pour chaque requête
+      prisma = new PrismaClient({
+        datasources: {
+          db: {
+            url: process.env.DATABASE_URL
+          }
+        }
+      })
+      
       await prisma.$connect()
       dbStatus = 'connected'
       
@@ -36,7 +45,9 @@ export async function GET() {
     } catch (error) {
       dbStatus = `error: ${error instanceof Error ? error.message : 'unknown'}`
     } finally {
-      await prisma.$disconnect()
+      if (prisma) {
+        await prisma.$disconnect()
+      }
     }
 
     return NextResponse.json({
