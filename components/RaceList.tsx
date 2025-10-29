@@ -11,7 +11,10 @@ interface Race {
   description?: string
   location: string
   date: string
+  distance?: string
   website?: string
+  logoUrl?: string
+  imageUrl?: string
   creator: {
     name: string
     email: string

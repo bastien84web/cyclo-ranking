@@ -1,269 +1,847 @@
-// Script de peuplement pour la production
-// Ce script sera exécuté après le déploiement pour peupler la base PostgreSQL
-
+// Script de peuplement complet pour les cyclosportives 2025
 const { PrismaClient } = require('@prisma/client')
 const bcrypt = require('bcryptjs')
 
 const prisma = new PrismaClient()
 
-const realRaces = [
-  // Courses mythiques
+const cyclosportives2025 = [
+  // Alsace
   {
-    name: "L'Étape du Tour",
-    description: "Revivez l'expérience du Tour de France sur une étape mythique. Parcours exigeant avec montées légendaires et paysages à couper le souffle.",
-    date: new Date('2025-07-13'),
-    location: "Alpe d'Huez, France",
-    distance: "138 km",
-    website: "https://www.letapedutour.com"
+    name: "La sundgauvienne",
+    description: "Cyclosportive dans le Sundgau alsacien, région vallonnée aux paysages bucoliques entre forêts et prairies.",
+    location: "Hégenheim (Haut-Rhin - 68)",
+    date: new Date('2025-05-11'),
+    distance: "80-120 km",
+    website: null
   },
   {
-    name: "La Marmotte",
-    description: "L'une des cyclosportives les plus prestigieuses des Alpes. 4 cols mythiques : Glandon, Télégraphe, Galibier et Alpe d'Huez.",
+    name: "L'Alsacienne lac de Kruth - Wildenstein",
+    description: "Parcours autour du lac de Kruth-Wildenstein dans les Vosges alsaciennes, entre montagne et nature préservée.",
+    location: "Kruth - Wildenstein (Haut-Rhin - 68)",
+    date: new Date('2025-06-29'),
+    distance: "90-140 km",
+    website: null
+  },
+  {
+    name: "GFNY Grand Ballon",
+    description: "Granfondo avec ascension du Grand Ballon, point culminant des Vosges à 1424m d'altitude.",
+    location: "Thann (Haut-Rhin - 68)",
+    date: new Date('2025-07-20'),
+    distance: "100-160 km",
+    website: "https://www.gfny.com"
+  },
+
+  // Aquitaine
+  {
+    name: "Défi 47",
+    description: "Cyclosportive dans le Lot-et-Garonne, parcours vallonné entre vignes, vergers et bastides.",
+    location: "Prayssas (Lot-et-Garonne - 47)",
+    date: new Date('2025-04-13'),
+    distance: "70-130 km",
+    website: null
+  },
+  {
+    name: "La Beuchigue",
+    description: "Cyclosportive landaise à travers la forêt des Landes et ses paysages typiques de pins maritimes.",
+    location: "Saint-Sever (Landes - 40)",
+    date: new Date('2025-04-20'),
+    distance: "85-150 km",
+    website: null
+  },
+  {
+    name: "Euskal Cyclo",
+    description: "Cyclosportive au cœur du Pays Basque, entre montagne basque et tradition euskaldun.",
+    location: "Cambo-les-Bains (Pyrénées-Atlantiques - 64)",
+    date: new Date('2025-05-25'),
+    distance: "90-160 km",
+    website: null
+  },
+  {
+    name: "La Bizikleta",
+    description: "Cyclosportive basque avec vue sur l'océan Atlantique et les Pyrénées, dans un cadre exceptionnel.",
+    location: "Saint-Jean-de-Luz (Pyrénées-Atlantiques - 64)",
+    date: new Date('2025-06-08'),
+    distance: "80-140 km",
+    website: null
+  },
+  {
+    name: "GFNY Lourdes Tourmalet",
+    description: "Granfondo mythique avec l'ascension du col du Tourmalet, géant des Pyrénées à 2115m.",
+    location: "Lourdes (Hautes-Pyrénées - 65)",
+    date: new Date('2025-06-22'),
+    distance: "120-180 km",
+    website: "https://www.gfny.com"
+  },
+  {
+    name: "La Périgordine",
+    description: "Découverte du Périgord Noir, ses châteaux médiévaux, grottes préhistoriques et gastronomie.",
+    location: "Le Lardin-Saint-Lazare (Dordogne - 24)",
+    date: new Date('2025-06-22'),
+    distance: "75-130 km",
+    website: null
+  },
+  {
+    name: "La Matthieu Ladagnous",
+    description: "Cyclosportive en hommage au coureur cycliste, dans les vallées pyrénéennes.",
+    location: "Asson (Pyrénées-Atlantiques - 65)",
+    date: new Date('2025-07-13'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "La Marcel Queheille",
+    description: "Cyclosportive dans le Béarn, parcours montagneux en hommage à Marcel Queheille.",
+    location: "Mauléon-Licharre (Pyrénées-Atlantiques - 64)",
+    date: new Date('2025-08-16'),
+    distance: "100-160 km",
+    website: null
+  },
+
+  // Auvergne
+  {
+    name: "La Volcane",
+    description: "Cyclosportive au cœur des volcans d'Auvergne, paysages volcaniques uniques et sources de Volvic.",
+    location: "Volvic (Puy-de-Dôme - 63)",
+    date: new Date('2025-06-15'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Les Copains",
+    description: "Cyclosportive conviviale dans les monts du Forez, ambiance chaleureuse garantie.",
+    location: "Ambert (Puy-de-Dôme - 63)",
     date: new Date('2025-07-05'),
-    location: "Bourg d'Oisans, France",
+    distance: "80-140 km",
+    website: null
+  },
+  {
+    name: "L'Etape Sanfloraine",
+    description: "Cyclosportive dans le Cantal avec vue sur les monts du Cantal et le plateau de Saint-Flour.",
+    location: "Saint-Flour (Cantal - 15)",
+    date: new Date('2025-08-10'),
+    distance: "85-160 km",
+    website: null
+  },
+  {
+    name: "La Sancy Arc en Ciel By Laurent Brochard",
+    description: "Cyclosportive autour du Puy de Sancy, point culminant du Massif Central, par Laurent Brochard.",
+    location: "Chambon-sur-Lac (Puy-de-Dôme - 63)",
+    date: new Date('2025-09-13'),
+    distance: "100-170 km",
+    website: null
+  },
+
+  // Basse-Normandie
+  {
+    name: "L'Ornaise",
+    description: "Cyclosportive normande à travers le bocage ornais et ses paysages verdoyants.",
+    location: "Argentan (Orne - 61)",
+    date: new Date('2025-05-11'),
+    distance: "80-140 km",
+    website: null
+  },
+  {
+    name: "La Ronde Normande",
+    description: "Découverte du Calvados entre bocage normand et côte du Bessin.",
+    location: "Juaye-Mondaye (Calvados - 14)",
+    date: new Date('2025-05-25'),
+    distance: "90-150 km",
+    website: null
+  },
+
+  // Bourgogne
+  {
+    name: "La Claudio Chiappucci",
+    description: "Cyclosportive en hommage au coureur italien, à travers les vignobles bourguignons.",
+    location: "Arnay-le-Duc (Côte d'Or - 21)",
+    date: new Date('2025-06-07'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "Courir pour la Paix",
+    description: "Cyclosportive solidaire dans la Côte d'Or, entre vignobles et patrimoine bourguignon.",
+    location: "Chailly-sur-Armançon (Côte d'Or - 21)",
+    date: new Date('2025-08-02'),
+    distance: "85-140 km",
+    website: null
+  },
+  {
+    name: "La Jean-François Bernard",
+    description: "Cyclosportive en hommage au grimpeur français, dans le Morvan nivernais.",
+    location: "Corbigny (Nièvre - 58)",
+    date: new Date('2025-09-07'),
+    distance: "90-150 km",
+    website: null
+  },
+
+  // Bretagne
+  {
+    name: "Tro Bro Leon Challenge",
+    description: "Cyclosportive bretonne sur les routes du Tro Bro Leon, avec secteurs pavés et chemins.",
+    location: "Lannelis (Finistère - 29)",
+    date: new Date('2025-05-10'),
+    distance: "100-180 km",
+    website: null
+  },
+  {
+    name: "La Coeur de Bretagne",
+    description: "Cyclosportive au cœur de la Bretagne, entre landes et forêts bretonnes.",
+    location: "Malestroit (Morbihan - 56)",
+    date: new Date('2025-07-06'),
+    distance: "80-140 km",
+    website: null
+  },
+
+  // PACA
+  {
+    name: "GFNY Cannes",
+    description: "Granfondo sur la Côte d'Azur avec vue sur la Méditerranée et l'arrière-pays cannois.",
+    location: "Cannes (Alpes-Maritimes - 06)",
+    date: new Date('2025-03-23'),
+    distance: "100-160 km",
+    website: "https://www.gfny.com"
+  },
+  {
+    name: "Tour du Pays d'Apt Cyclo",
+    description: "Cyclosportive dans le Luberon, entre villages perchés et champs de lavande.",
+    location: "Apt (Vaucluse - 84)",
+    date: new Date('2025-03-30'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Poli Sainte-Baume",
+    description: "Cyclosportive varoise autour du massif de la Sainte-Baume, haut lieu spirituel.",
+    location: "La Cadière d'Azur (Var - 83)",
+    date: new Date('2025-04-06'),
+    distance: "85-140 km",
+    website: null
+  },
+  {
+    name: "La Lavandine",
+    description: "Cyclosportive dans les Alpes de Haute-Provence, au pays de la lavande.",
+    location: "La Motte-du-Caire (Alpes-de-Haute-Provence - 04)",
+    date: new Date('2025-04-13'),
+    distance: "80-130 km",
+    website: null
+  },
+  {
+    name: "La Lazaridès",
+    description: "Cyclosportive cannoise en hommage au photographe Jean-Claude Lazaridès.",
+    location: "Cannes (Alpes-Maritimes - 06)",
+    date: new Date('2025-04-20'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Granfondo La Vençoise",
+    description: "Granfondo dans l'arrière-pays niçois, entre mer et montagne.",
+    location: "Vence (Alpes-Maritimes - 06)",
+    date: new Date('2025-05-11'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "Les Boucles du Verdon",
+    description: "Cyclosportive autour des gorges du Verdon, Grand Canyon français.",
+    location: "Gréoux-les-Bains (Alpes-de-Haute-Provence - 04)",
+    date: new Date('2025-05-18'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "GF Mont Ventoux",
+    description: "Granfondo avec l'ascension mythique du Mont Ventoux, Géant de Provence à 1912m.",
+    location: "Vaison la Romaine (Vaucluse - 84)",
+    date: new Date('2025-06-01'),
+    distance: "118-160 km",
+    website: "https://gfmontventoux.com"
+  },
+  {
+    name: "La Drapoise, souvenir René Vietto",
+    description: "Cyclosportive en hommage à René Vietto, roi de la montagne, dans l'arrière-pays niçois.",
+    location: "Drap (Alpes-Maritimes - 06)",
+    date: new Date('2025-06-01'),
+    distance: "90-140 km",
+    website: null
+  },
+  {
+    name: "Bol d'Or circuit Paul Ricard",
+    description: "Cyclosportive sur le célèbre circuit Paul Ricard, expérience unique sur piste F1.",
+    location: "Le Castellet (Var - 83)",
+    date: new Date('2025-06-07'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "La Mercan'Tour Bonette",
+    description: "Cyclosportive avec ascension de la Bonette, plus haute route d'Europe à 2802m.",
+    location: "Valberg (Alpes-Maritimes - 06)",
+    date: new Date('2025-06-15'),
+    distance: "140-180 km",
+    website: null
+  },
+
+  // Rhône-Alpes
+  {
+    name: "La Corima Drôme Provençale",
+    description: "Cyclosportive dans la Drôme provençale, entre lavande et vignobles.",
+    location: "Montélimar (Drôme - 26)",
+    date: new Date('2025-03-30'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Les Rondes de la Clairette",
+    description: "Cyclosportive dans le Vercors drômois, pays de la Clairette de Die.",
+    location: "Vercheny (Drôme - 26)",
+    date: new Date('2025-04-13'),
+    distance: "80-140 km",
+    website: null
+  },
+  {
+    name: "Le Raid du Bugey",
+    description: "Cyclosportive dans le Bugey, entre Jura et Alpes, paysages vallonnés.",
+    location: "Lagnieu (Ain - 01)",
+    date: new Date('2025-04-27'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "Thonon Cycling Race",
+    description: "Cyclosportive autour du lac Léman, entre France et Suisse.",
+    location: "Thonon-les-Bains (Haute-Savoie - 74)",
+    date: new Date('2025-05-04'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "La Thierry Claveyrolat",
+    description: "Cyclosportive en hommage au grimpeur français, dans l'Oisans.",
+    location: "Vizille (Isère - 38)",
+    date: new Date('2025-05-04'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "L'Aindinoise",
+    description: "Cyclosportive dans le Bugey, autour de Belley et ses paysages vallonnés.",
+    location: "Belley (Ain - 01)",
+    date: new Date('2025-05-10'),
+    distance: "85-140 km",
+    website: null
+  },
+  {
+    name: "GFNY Villard-de-Lans",
+    description: "Granfondo dans le Vercors, plateau aux paysages grandioses.",
+    location: "Villard-de-Lans (Isère - 38)",
+    date: new Date('2025-05-25'),
+    distance: "100-160 km",
+    website: "https://www.gfny.com"
+  },
+  {
+    name: "Les 3 cols materiel-velo.com",
+    description: "Cyclosportive lyonnaise avec 3 cols emblématiques de la région.",
+    location: "La Tour-de-Salvagny (Rhône - 69)",
+    date: new Date('2025-05-29'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Motz-Chautagne Tour",
+    description: "Cyclosportive savoyarde entre lac du Bourget et vignobles de Chautagne.",
+    location: "Motz (Savoie - 73)",
+    date: new Date('2025-06-01'),
+    distance: "80-130 km",
+    website: null
+  },
+  {
+    name: "La Faucigny Glières",
+    description: "Cyclosportive en Haute-Savoie, sur les traces de la Résistance au plateau des Glières.",
+    location: "Bonneville (Haute-Savoie - 74)",
+    date: new Date('2025-06-01'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Galibier Challenge",
+    description: "Cyclosportive avec ascension du col du Galibier, géant des Alpes à 2642m.",
+    location: "Saint-Michel-de-Maurienne (Savoie - 73)",
+    date: new Date('2025-06-08'),
+    distance: "120-180 km",
+    website: null
+  },
+  {
+    name: "L'Ardéchoise",
+    description: "La plus grande cyclosportive de France ! 5 parcours de 66 à 285 km dans les gorges de l'Ardèche. Parcours mythiques : Volcanique (186km), Boutières (134km), AVM (285km), Ardéchoise (230km), Sucs (241km).",
+    location: "Saint-Félicien (Ardèche - 07)",
+    date: new Date('2025-06-14'),
+    distance: "66-285 km",
+    website: "https://www.ardechoise.com"
+  },
+  {
+    name: "GFNY La Vaujany Alpe d'Huez",
+    description: "Granfondo avec arrivée à l'Alpe d'Huez par les 21 lacets mythiques.",
+    location: "Vaujany (Isère - 38)",
+    date: new Date('2025-06-15'),
+    distance: "120-180 km",
+    website: "https://www.gfny.com"
+  },
+  {
+    name: "Châtel Chablais Léman Race",
+    description: "Cyclosportive dans le Chablais, entre lac Léman et sommets alpins.",
+    location: "Châtel (Haute-Savoie - 74)",
+    date: new Date('2025-06-22'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "La Téméraire",
+    description: "Cyclosportive jurassienne dans la région de Salins-les-Bains.",
+    location: "Salins-les-Bains (Jura - 39)",
+    date: new Date('2025-06-22'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Marmotte Granfondo Alpes",
+    description: "La cyclosportive la plus mythique des Alpes ! 4 cols légendaires : Glandon, Télégraphe, Galibier et Alpe d'Huez. 174 km et 5000m de dénivelé.",
+    location: "Le Bourg d'Oisans (Isère - 38)",
+    date: new Date('2025-06-22'),
     distance: "174 km",
     website: "https://www.lamarmotte.fr"
   },
   {
-    name: "Paris-Roubaix Challenge",
-    description: "Sur les traces des coureurs professionnels, découvrez l'enfer du Nord et ses pavés légendaires.",
-    date: new Date('2025-04-13'),
-    location: "Compiègne, France",
-    distance: "170 km",
-    website: "https://www.parisroubaixchallenge.fr"
+    name: "La Grenobloise",
+    description: "Cyclosportive dans l'agglomération grenobloise, entre Vercors et Chartreuse.",
+    location: "Grenoble (Isère - 38)",
+    date: new Date('2025-07-06'),
+    distance: "90-150 km",
+    website: null
   },
   {
-    name: "La Purito Andorra",
-    description: "Cyclosportive de montagne en Andorre avec des paysages pyrénéens exceptionnels. Parcours vallonné et technique.",
-    date: new Date('2025-08-24'),
-    location: "Andorre-la-Vieille, Andorre",
-    distance: "125 km",
-    website: "https://www.puritoandorra.com"
+    name: "La JPP - Neuf de Coeur",
+    description: "Cyclosportive en Haute-Savoie, dans la vallée de l'Arve.",
+    location: "Les Carroz (Haute-Savoie - 74)",
+    date: new Date('2025-07-06'),
+    distance: "100-160 km",
+    website: null
   },
   {
-    name: "L'Ardéchoise",
-    description: "La plus grande cyclosportive de France ! Découvrez les routes sinueuses et les paysages sauvages de l'Ardèche.",
-    date: new Date('2025-06-14'),
-    location: "Saint-Félicien, Ardèche",
-    distance: "145 km",
-    website: "https://www.ardechoise.com"
+    name: "Le Tour du Mont Blanc",
+    description: "Cyclosportive autour du massif du Mont-Blanc, entre France, Suisse et Italie.",
+    location: "Les Saisies (Savoie - 73)",
+    date: new Date('2025-07-12'),
+    distance: "160-200 km",
+    website: null
   },
   {
-    name: "La Quebrantahuesos",
-    description: "Cyclosportive espagnole mythique dans les Pyrénées. Parcours exigeant avec le col du Somport et des paysages grandioses.",
-    date: new Date('2025-06-21'),
-    location: "Sabiñánigo, Espagne",
-    distance: "200 km",
-    website: "https://www.quebrantahuesos.com"
+    name: "Granfondo Col de la Loze",
+    description: "Granfondo avec ascension du col de la Loze, nouveau col du Tour de France.",
+    location: "Brides-les-Bains (Savoie - 73)",
+    date: new Date('2025-07-13'),
+    distance: "120-180 km",
+    website: null
   },
   {
-    name: "La Ventoux Dénivelé Challenge",
-    description: "Défi ultime : gravir 3 fois le Mont Ventoux par ses 3 versants différents. Pour les plus courageux !",
-    date: new Date('2025-06-08'),
-    location: "Bédoin, Vaucluse",
-    distance: "138 km",
-    website: "https://www.ventouxdenivelechallenge.com"
+    name: "GF Sybelles La Toussuire",
+    description: "Granfondo dans le domaine des Sybelles, plus grand domaine skiable de France.",
+    location: "La Toussuire (Savoie - 73)",
+    date: new Date('2025-07-14'),
+    distance: "100-160 km",
+    website: null
   },
   {
-    name: "La Cyclo du Léman",
-    description: "Tour du lac Léman entre France et Suisse. Parcours roulant avec vues magnifiques sur le lac et les Alpes.",
-    date: new Date('2025-05-25'),
-    location: "Thonon-les-Bains, France",
-    distance: "180 km",
-    website: "https://www.cyclodulman.com"
+    name: "Etape du Tour : Albertville - La Plagne",
+    description: "Revivez une étape du Tour de France avec arrivée à La Plagne, station olympique.",
+    location: "Albertville (Savoie - 73)",
+    date: new Date('2025-07-20'),
+    distance: "140 km",
+    website: "https://www.letapedutour.com"
   },
   {
-    name: "La Granfondo Stelvio Santini",
-    description: "Cyclosportive italienne légendaire avec l'ascension du col du Stelvio, l'un des plus hauts cols routiers d'Europe.",
-    date: new Date('2025-08-30'),
-    location: "Bormio, Italie",
-    distance: "151 km",
-    website: "https://www.granfondostelvio.com"
+    name: "La Madeleine",
+    description: "Cyclosportive avec ascension du col de la Madeleine, col mythique de Maurienne.",
+    location: "La Chambre (Savoie - 73)",
+    date: new Date('2025-07-27'),
+    distance: "100-160 km",
+    website: null
   },
   {
-    name: "La Dordogne Intégrale",
-    description: "Parcours vallonné à travers les plus beaux villages du Périgord. Gastronomie et patrimoine au rendez-vous.",
-    date: new Date('2025-09-07'),
-    location: "Sarlat-la-Canéda, Dordogne",
-    distance: "120 km",
-    website: "https://www.dordogneintegrale.fr"
-  },
-  {
-    name: "La Haute Route Alpes",
-    description: "Étape de prestige dans les Alpes françaises. Cols mythiques et paysages alpins d'exception.",
-    date: new Date('2025-08-16'),
-    location: "Megève, Haute-Savoie",
-    distance: "165 km",
-    website: "https://www.hauteroute.org"
-  },
-  {
-    name: "La Corsica Granfondo",
-    description: "Découvrez la beauté sauvage de la Corse sur des routes sinueuses entre mer et montagne.",
-    date: new Date('2025-05-11'),
-    location: "Ajaccio, Corse",
-    distance: "135 km",
-    website: "https://www.corsicagranfondo.com"
-  },
-  {
-    name: "La Drôme Classic",
-    description: "Cyclosportive dans la Drôme provençale. Lavande, vignobles et routes de caractère vous attendent.",
-    date: new Date('2025-06-29'),
-    location: "Nyons, Drôme",
-    distance: "110 km",
-    website: "https://www.dromeclassic.fr"
-  },
-  {
-    name: "La Flèche Wallonne Cyclo",
-    description: "Sur les traces de la classique belge, avec l'ascension redoutable du Mur de Huy en point d'orgue.",
-    date: new Date('2025-04-20'),
-    location: "Huy, Belgique",
-    distance: "98 km",
-    website: "https://www.flechewallonnecyclo.be"
-  },
-  {
-    name: "La Vuelta a Mallorca Cyclosportive",
-    description: "Cyclosportive sur l'île de Majorque avec des vues spectaculaires sur la Méditerranée et la Serra de Tramuntana.",
-    date: new Date('2025-03-30'),
-    location: "Palma de Majorque, Espagne",
-    distance: "155 km",
-    website: "https://www.vueltamallorca.com"
-  },
-  
-  // Nouvelles courses ajoutées
-  {
-    name: "La Cyclo des Vins de Bourgogne",
-    description: "Parcours vallonné à travers les vignobles bourguignons. Dégustation et patrimoine viticole au programme.",
-    date: new Date('2025-09-14'),
-    location: "Beaune, Côte-d'Or",
-    distance: "95 km",
-    website: "https://www.cyclobourgogne.fr"
-  },
-  {
-    name: "La Montée du Puy de Dôme",
-    description: "Ascension mythique du volcan auvergnat. Vue panoramique exceptionnelle sur la chaîne des Puys.",
-    date: new Date('2025-06-08'),
-    location: "Clermont-Ferrand, Puy-de-Dôme",
-    distance: "85 km",
-    website: "https://www.puydedome-cyclo.fr"
-  },
-  {
-    name: "La Transpyrénéenne",
-    description: "Traversée des Pyrénées de l'Atlantique à la Méditerranée. Défi sportif et paysages grandioses.",
+    name: "L'Etape du Tour femmes",
+    description: "Etape du Tour de France dédiée aux femmes, parcours adapté et festif.",
+    location: "Chambéry (Savoie - 73)",
     date: new Date('2025-08-02'),
-    location: "Hendaye, Pyrénées-Atlantiques",
-    distance: "720 km",
-    website: "https://www.transpyrenenne.com"
+    distance: "100-140 km",
+    website: "https://www.letapedutour.com"
   },
   {
-    name: "La Cyclo du Luberon",
-    description: "Découverte des villages perchés du Luberon. Lavande, vignes et patrimoine provençal.",
-    date: new Date('2025-06-15'),
-    location: "Apt, Vaucluse",
-    distance: "112 km",
-    website: "https://www.cycloluberon.fr"
+    name: "Le défi des Vals",
+    description: "Cyclosportive dans les vallées dauphinoises, défi montagnard.",
+    location: "Les Abrets en Dauphiné (Isère - 38)",
+    date: new Date('2025-08-08'),
+    distance: "90-150 km",
+    website: null
   },
   {
-    name: "La Ronde des Châteaux de la Loire",
-    description: "Circuit royal à travers les plus beaux châteaux de la Loire. Histoire et gastronomie française.",
-    date: new Date('2025-05-18'),
-    location: "Blois, Loir-et-Cher",
-    distance: "130 km",
-    website: "https://www.chateauxloire-cyclo.fr"
+    name: "Lélex Pays de Gex",
+    description: "Cyclosportive dans le Pays de Gex, entre Jura et lac Léman.",
+    location: "Pays de Gex (Ain - 01)",
+    date: new Date('2025-08-09'),
+    distance: "80-140 km",
+    website: null
   },
+  {
+    name: "GFNY Alpes Vaujany",
+    description: "Granfondo dans l'Oisans, au cœur des Alpes françaises.",
+    location: "Vaujany (Isère - 38)",
+    date: new Date('2025-08-24'),
+    distance: "120-180 km",
+    website: "https://www.gfny.com"
+  },
+  {
+    name: "Dvélos Lac d'Annecy",
+    description: "Cyclosportive autour du lac d'Annecy, perle des Alpes françaises.",
+    location: "Saint Jorioz (Haute-Savoie - 74)",
+    date: new Date('2025-08-24'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "Megève Mont Blanc",
+    description: "Cyclosportive de prestige dans le massif du Mont-Blanc, station mythique de Megève.",
+    location: "Megève (Haute-Savoie - 74)",
+    date: new Date('2025-08-31'),
+    distance: "120-180 km",
+    website: null
+  },
+  {
+    name: "La Rémi Cavagna au coeur de la Loire",
+    description: "Cyclosportive en hommage au coureur français Rémi Cavagna, dans la Loire.",
+    location: "Saint-Just-en-Chevalet (Loire - 42)",
+    date: new Date('2025-09-07'),
+    distance: "90-150 km",
+    website: null
+  },
+  {
+    name: "La Drômoise",
+    description: "Cyclosportive dans la Drôme, entre Vercors et Provence.",
+    location: "Die (Drôme - 26)",
+    date: new Date('2025-09-21'),
+    distance: "80-140 km",
+    website: null
+  },
+  {
+    name: "La Bisou",
+    description: "Cyclosportive dans l'Ain, parcours vallonné et convivial.",
+    location: "Péronnas (Ain - 01)",
+    date: new Date('2025-09-28'),
+    distance: "85-140 km",
+    website: null
+  }
+,
   {
     name: "La Granfondo del Gavia",
-    description: "Cyclosportive italienne avec l'ascension du col du Gavia dans les Alpes lombardes.",
-    date: new Date('2025-07-27'),
-    location: "Bormio, Italie",
-    distance: "168 km",
-    website: "https://www.granfondogavia.it"
+    description: "Cyclosportive alpine avec ascension du célèbre col du Gavia, passage mythique du Giro d'Italia.",
+    location: "Bormio, Italie (proche frontière française)",
+    date: new Date('2025-08-10'),
+    distance: "138 km",
+    website: null
   },
   {
     name: "La Cyclo des Gorges du Verdon",
-    description: "Parcours spectaculaire autour du Grand Canyon du Verdon. Falaises et eaux turquoise.",
+    description: "Parcours spectaculaire autour des gorges du Verdon, entre Provence et Alpes de Haute-Provence.",
+    location: "Castellane (Alpes-de-Haute-Provence - 04)",
     date: new Date('2025-09-07'),
-    location: "Castellane, Alpes-de-Haute-Provence",
-    distance: "140 km",
-    website: "https://www.verdon-cyclo.fr"
+    distance: "95-150 km",
+    website: null
   },
   {
     name: "La Montée de l'Alpe d'Huez",
-    description: "Ascension mythique des 21 lacets de l'Alpe d'Huez. Temple du cyclisme mondial.",
-    date: new Date('2025-07-12'),
-    location: "Bourg d'Oisans, Isère",
-    distance: "55 km",
-    website: "https://www.alpedhuez-cyclo.fr"
+    description: "Montée mythique de l'Alpe d'Huez avec ses 21 lacets, temple du cyclisme mondial.",
+    location: "Bourg d'Oisans (Isère - 38)",
+    date: new Date('2025-07-19'),
+    distance: "45 km",
+    website: null
   },
   {
     name: "La Cyclo de la Côte d'Azur",
-    description: "De Nice à Monaco par la corniche. Mer Méditerranée et villages perchés.",
-    date: new Date('2025-04-27'),
-    location: "Nice, Alpes-Maritimes",
-    distance: "145 km",
-    website: "https://www.cotedazur-cyclo.fr"
+    description: "Parcours côtier entre Nice et Cannes, découverte de la Riviera française à vélo.",
+    location: "Nice (Alpes-Maritimes - 06)",
+    date: new Date('2025-03-23'),
+    distance: "80-120 km",
+    website: null
   },
   {
     name: "La Velothon Berlin",
-    description: "Cyclosportive urbaine dans la capitale allemande. Histoire et modernité berlinoise.",
-    date: new Date('2025-06-01'),
+    description: "Cyclosportive urbaine dans la capitale allemande, parcours plat et rapide.",
     location: "Berlin, Allemagne",
+    date: new Date('2025-06-01'),
     distance: "120 km",
-    website: "https://www.velothon-berlin.de"
+    website: null
   },
   {
     name: "La Cyclo des Volcans d'Auvergne",
-    description: "Circuit à travers le Parc des Volcans. Paysages volcaniques uniques en Europe.",
-    date: new Date('2025-08-24'),
-    location: "Le Lioran, Cantal",
-    distance: "155 km",
-    website: "https://www.volcans-cyclo.fr"
+    description: "Découverte des volcans d'Auvergne, paysages uniques entre puys et cratères.",
+    location: "Clermont-Ferrand (Puy-de-Dôme - 63)",
+    date: new Date('2025-09-14'),
+    distance: "100-160 km",
+    website: null
   },
   {
     name: "La Cyclo du Mont-Blanc",
-    description: "Tour du massif du Mont-Blanc entre France, Suisse et Italie. Haute montagne et glaciers.",
-    date: new Date('2025-08-16'),
-    location: "Chamonix, Haute-Savoie",
-    distance: "165 km",
-    website: "https://www.montblanc-cyclo.fr"
+    description: "Tour du massif du Mont-Blanc entre France, Suisse et Italie.",
+    location: "Chamonix (Haute-Savoie - 74)",
+    date: new Date('2025-08-31'),
+    distance: "180 km",
+    website: null
   },
   {
     name: "La Ronde Picarde",
-    description: "Découverte de la Picardie historique. Cathédrales gothiques et champs de bataille.",
-    date: new Date('2025-05-11'),
-    location: "Amiens, Somme",
-    distance: "98 km",
-    website: "https://www.rondepicarde.fr"
+    description: "Cyclosportive dans la campagne picarde, parcours vallonné entre champs et forêts.",
+    location: "Amiens (Somme - 80)",
+    date: new Date('2025-05-18'),
+    distance: "90-140 km",
+    website: null
   },
   {
     name: "La Cyclo des Causses",
-    description: "Plateaux calcaires et gorges profondes. Paysages sauvages du sud du Massif Central.",
-    date: new Date('2025-06-29'),
-    location: "Millau, Aveyron",
-    distance: "125 km",
-    website: "https://www.causses-cyclo.fr"
+    description: "Parcours sur les plateaux calcaires des Causses, paysages arides et authentiques.",
+    location: "Millau (Aveyron - 12)",
+    date: new Date('2025-06-08'),
+    distance: "120-180 km",
+    website: null
   },
   {
     name: "La Cyclo des Châteaux Cathares",
-    description: "Sur les traces des Cathares dans l'Aude. Châteaux perchés et histoire médiévale.",
-    date: new Date('2025-09-21'),
-    location: "Carcassonne, Aude",
-    distance: "135 km",
-    website: "https://www.cathares-cyclo.fr"
+    description: "Découverte des châteaux cathares dans l'Aude, histoire et patrimoine à vélo.",
+    location: "Carcassonne (Aude - 11)",
+    date: new Date('2025-04-27'),
+    distance: "100-150 km",
+    website: null
   },
   {
     name: "La Granfondo Campagnolo Roma",
-    description: "Cyclosportive dans la campagne romaine. Patrimoine antique et collines du Latium.",
-    date: new Date('2025-03-30'),
+    description: "Granfondo dans la campagne romaine, parcours vallonné autour de la ville éternelle.",
     location: "Rome, Italie",
-    distance: "142 km",
-    website: "https://www.granfondoroma.it"
-  }
-]
+    date: new Date('2025-03-16'),
+    distance: "135 km",
+    website: null
+  },
+  {
+    name: "La Cyclo de la Baie de Somme",
+    description: "Parcours côtier dans la baie de Somme, paysages marins et ornithologie.",
+    location: "Saint-Valery-sur-Somme (Somme - 80)",
+    date: new Date('2025-09-21'),
+    distance: "70-110 km",
+    website: null
+  },
+  {
+    name: "La Montée du Ventoux par Bédoin",
+    description: "Ascension classique du Mont Ventoux par Bédoin, la voie royale vers le Géant de Provence.",
+    location: "Bédoin (Vaucluse - 84)",
+    date: new Date('2025-06-22'),
+    distance: "42 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Lacs alpins",
+    description: "Tour des lacs alpins entre Annecy et Genève, paysages lacustres exceptionnels.",
+    location: "Annecy (Haute-Savoie - 74)",
+    date: new Date('2025-07-06'),
+    distance: "110-160 km",
+    website: null
+  },
+  {
+    name: "La Ronde des Moulins de Flandre",
+    description: "Cyclosportive dans la campagne flamande, découverte du patrimoine des moulins.",
+    location: "Lille (Nord - 59)",
+    date: new Date('2025-04-06'),
+    distance: "80-130 km",
+    website: null
+  },
+  {
+    name: "La Cyclo du Périgord Noir",
+    description: "Parcours dans le Périgord Noir, entre châteaux et gastronomie périgourdine.",
+    location: "Sarlat-la-Canéda (Dordogne - 24)",
+    date: new Date('2025-05-25'),
+    distance: "90-140 km",
+    website: null
+  },
+  {
+    name: "La Granfondo Nove Colli",
+    description: "Granfondo italienne mythique dans les collines de Romagne, parcours vallonné technique.",
+    location: "Cesenatico, Italie",
+    date: new Date('2025-05-04'),
+    distance: "130-200 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Gorges de l'Ardèche",
+    description: "Parcours spectaculaire le long des gorges de l'Ardèche, nature sauvage préservée.",
+    location: "Vallon-Pont-d'Arc (Ardèche - 07)",
+    date: new Date('2025-09-28'),
+    distance: "85-135 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Vosges",
+    description: "Découverte du massif vosgien, forêts de sapins et cols mythiques des Vosges.",
+    location: "Gérardmer (Vosges - 88)",
+    date: new Date('2025-08-17'),
+    distance: "100-150 km",
+    website: null
+  },
+  {
+    name: "La Ronde Tahitienne",
+    description: "Cyclosportive exotique autour de l'île de Tahiti, paysages tropicaux uniques.",
+    location: "Papeete, Tahiti",
+    date: new Date('2025-11-15'),
+    distance: "120 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Châteaux de Dordogne",
+    description: "Parcours entre les châteaux de la vallée de la Dordogne, patrimoine historique exceptionnel.",
+    location: "Bergerac (Dordogne - 24)",
+    date: new Date('2025-10-05'),
+    distance: "95-145 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Cévennes",
+    description: "Parcours dans le parc national des Cévennes, nature préservée et villages authentiques.",
+    location: "Florac (Lozère - 48)",
+    date: new Date('2025-08-24'),
+    distance: "110-170 km",
+    website: null
+  },
+  {
+    name: "La Ronde des Lavandes",
+    description: "Cyclosportive en Provence pendant la floraison des lavandes, paysages parfumés.",
+    location: "Valensole (Alpes-de-Haute-Provence - 04)",
+    date: new Date('2025-07-13'),
+    distance: "80-120 km",
+    website: null
+  },
+  {
+    name: "La Cyclo du Luberon",
+    description: "Parcours dans le parc naturel du Luberon, villages perchés et paysages provençaux.",
+    location: "Apt (Vaucluse - 84)",
+    date: new Date('2025-04-20'),
+    distance: "90-140 km",
+    website: null
+  },
+  {
+    name: "La Granfondo Stelvio",
+    description: "Montée mythique du col du Stelvio, un des cols les plus hauts d'Europe.",
+    location: "Bormio, Italie",
+    date: new Date('2025-09-06'),
+    distance: "60 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Alpilles",
+    description: "Parcours dans le massif des Alpilles, paysages méditerranéens et villages provençaux.",
+    location: "Saint-Rémy-de-Provence (Bouches-du-Rhône - 13)",
+    date: new Date('2025-03-30'),
+    distance: "70-110 km",
+    website: null
+  },
+  {
+    name: "La Ronde Catalane",
+    description: "Cyclosportive dans les Pyrénées catalanes, culture et paysages pyrénéens.",
+    location: "Perpignan (Pyrénées-Orientales - 66)",
+    date: new Date('2025-05-11'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "La Cyclo du Morvan",
+    description: "Parcours dans le parc naturel du Morvan, forêts et lacs de Bourgogne.",
+    location: "Château-Chinon (Nièvre - 58)",
+    date: new Date('2025-06-15'),
+    distance: "85-135 km",
+    website: null
+  },
+  {
+    name: "La Granfondo Alpes-Maritimes",
+    description: "Granfondo dans l'arrière-pays niçois, cols et villages perchés des Alpes-Maritimes.",
+    location: "Nice (Alpes-Maritimes - 06)",
+    date: new Date('2025-10-12'),
+    distance: "120-180 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Monts du Cantal",
+    description: "Découverte du massif cantalien, volcans anciens et paysages d'Auvergne.",
+    location: "Aurillac (Cantal - 15)",
+    date: new Date('2025-07-27'),
+    distance: "95-150 km",
+    website: null
+  },
+  {
+    name: "La Ronde Bretonne",
+    description: "Cyclosportive sur la côte bretonne, entre mer et landes de Bretagne.",
+    location: "Quimper (Finistère - 29)",
+    date: new Date('2025-08-03'),
+    distance: "90-140 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Corbières",
+    description: "Parcours dans les Corbières, vignobles et paysages méditerranéens de l'Aude.",
+    location: "Narbonne (Aude - 11)",
+    date: new Date('2025-09-14'),
+    distance: "100-150 km",
+    website: null
+  },
+  {
+    name: "La Granfondo des Dolomites",
+    description: "Granfondo dans les Dolomites italiennes, paysages alpins spectaculaires.",
+    location: "Cortina d'Ampezzo, Italie",
+    date: new Date('2025-08-10'),
+    distance: "140-200 km",
+    website: null
+  },
+  {
+    name: "La Cyclo de la Camargue",
+    description: "Parcours en Camargue entre étangs et marais, faune et flore exceptionnelles.",
+    location: "Arles (Bouches-du-Rhône - 13)",
+    date: new Date('2025-04-13'),
+    distance: "80-120 km",
+    website: null
+  },
+  {
+    name: "La Ronde des Châteaux de Loire",
+    description: "Cyclosportive dans la vallée de la Loire, châteaux Renaissance et vignobles.",
+    location: "Tours (Indre-et-Loire - 37)",
+    date: new Date('2025-05-18'),
+    distance: "100-160 km",
+    website: null
+  },
+  {
+    name: "La Cyclo des Hautes-Alpes",
+    description: "Parcours de haute montagne dans les Hautes-Alpes, cols mythiques et paysages alpins.",
+    location: "Gap (Hautes-Alpes - 05)",
+    date: new Date('2025-07-20'),
+    distance: "120-180 km",
+    website: null
+  },
+  {
+    name: "La Granfondo du Ventoux",
+    description: "Granfondo avec ascension complète du Mont Ventoux, défi ultime des cyclistes.",
+    location: "Malaucène (Vaucluse - 84)",
+    date: new Date('2025-06-29'),
+    distance: "150 km",
+    website: null
+  }]
 
 async function main() {
-  console.log('🌱 Début du peuplement de la base de production...')
+  console.log('🌱 Début du peuplement complet avec les cyclosportives 2025...')
 
-  // Créer un utilisateur admin
+  // Créer un utilisateur admin si nécessaire
   const hashedPassword = await bcrypt.hash('admin123', 10)
   
   const adminUser = await prisma.user.upsert({
@@ -277,13 +855,18 @@ async function main() {
     },
   })
 
-  console.log('👤 Utilisateur admin créé:', adminUser.email)
+  console.log('👤 Utilisateur admin:', adminUser.email)
 
   // Créer les cyclosportives
   let createdCount = 0
-  for (const raceData of realRaces) {
+  let updatedCount = 0
+  
+  for (const raceData of cyclosportives2025) {
     const existingRace = await prisma.race.findFirst({
-      where: { name: raceData.name }
+      where: { 
+        name: raceData.name,
+        location: raceData.location 
+      }
     })
     
     if (!existingRace) {
@@ -293,16 +876,58 @@ async function main() {
           createdBy: adminUser.id,
         },
       })
-      console.log(`🚴 Course créée: ${race.name}`)
+      console.log(`🚴 Course créée: ${race.name} - ${race.location}`)
       createdCount++
+    } else {
+      // Mettre à jour si nécessaire
+      const updatedRace = await prisma.race.update({
+        where: { id: existingRace.id },
+        data: {
+          description: raceData.description,
+          distance: raceData.distance,
+          website: raceData.website,
+        }
+      })
+      console.log(`🔄 Course mise à jour: ${updatedRace.name}`)
+      updatedCount++
     }
   }
 
-  console.log(`✅ ${createdCount} nouvelles cyclosportives créées en production!`)
-  console.log(`📊 Total: ${realRaces.length} cyclosportives disponibles`)
+  console.log(`✅ ${createdCount} nouvelles cyclosportives créées!`)
+  console.log(`🔄 ${updatedCount} cyclosportives mises à jour!`)
+  console.log(`📊 Total traité: ${cyclosportives2025.length} cyclosportives`)
+  
+  // Statistiques par région
+  const regions = {}
+  cyclosportives2025.forEach(race => {
+    const location = race.location
+    const region = location.includes('Alpes') ? 'PACA/Rhône-Alpes' :
+                  location.includes('Savoie') || location.includes('Isère') || location.includes('Rhône') || location.includes('Ain') || location.includes('Drôme') || location.includes('Ardèche') ? 'Rhône-Alpes' :
+                  location.includes('Haut-Rhin') ? 'Alsace' :
+                  location.includes('Pyrénées') || location.includes('Landes') || location.includes('Dordogne') || location.includes('Lot-et-Garonne') ? 'Aquitaine' :
+                  location.includes('Puy-de-Dôme') || location.includes('Cantal') ? 'Auvergne' :
+                  'Autres'
+    
+    regions[region] = (regions[region] || 0) + 1
+  })
+  
+  console.log('\n📍 Répartition par région:')
+  Object.entries(regions).forEach(([region, count]) => {
+    console.log(`   ${region}: ${count} cyclosportives`)
+  })
 }
 
-main()
+// Ajouter les commentaires de démonstration après le peuplement
+async function seedWithComments() {
+  await main()
+  
+  // Ajouter les commentaires de démonstration
+  console.log('\n💬 Ajout des commentaires de démonstration...')
+  const { seedCommentsProduction } = require('./seed-comments-production')
+  await seedCommentsProduction()
+}
+
+seedWithComments()
   .catch((e) => {
     console.error('❌ Erreur:', e)
     process.exit(1)

@@ -1,0 +1,22 @@
+
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c2d12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#92400e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="200" fill="url(#gradient)"/>
+  
+  <!-- Mountains -->
+  <polygon points="0,200 80,100 160,140 240,80 320,120 400,90 400,200" fill="rgba(255,255,255,0.2)"/>
+  <polygon points="40,200 120,120 200,160 280,100 360,140 400,110 400,200" fill="rgba(255,255,255,0.1)"/>
+  
+  <!-- Text background -->
+  <rect x="20" y="160" width="304" height="25" fill="rgba(0,0,0,0.7)" rx="5"/>
+  <text x="30" y="178" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">
+    Vignobles de Bourgogne
+  </text>
+</svg>

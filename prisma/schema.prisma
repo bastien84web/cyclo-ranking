@@ -31,6 +31,8 @@ model Race {
   date        DateTime
   distance    String?
   website     String?
+  logoUrl     String?  // URL ou chemin vers le logo de la cyclosportive
+  imageUrl    String?  // URL ou chemin vers une image/photo de la cyclosportive
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdBy   String

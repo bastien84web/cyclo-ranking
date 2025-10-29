@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, Calendar, Users, Star, ExternalLink } from 'lucide-react'
+import { MapPin, Calendar, Users, Star, ExternalLink, Route, MessageCircle } from 'lucide-react'
 import { VoteModal } from './VoteModal'
+import { CommentsModal } from './CommentsModal'
+import { SafeImage } from './SafeImage'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
@@ -12,7 +14,10 @@ interface Race {
   description?: string
   location: string
   date: string
+  distance?: string
   website?: string
+  logoUrl?: string
+  imageUrl?: string
   creator: {
     name: string
     email: string
@@ -38,6 +43,7 @@ interface RaceCardProps {
 export function RaceCard({ race }: RaceCardProps) {
   const { data: session } = useSession()
   const [showVoteModal, setShowVoteModal] = useState(false)
+  const [showCommentsModal, setShowCommentsModal] = useState(false)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -68,22 +74,64 @@ export function RaceCard({ race }: RaceCardProps) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
-            {race.name}
-          </h3>
-          {race.website && (
-            <a
-              href={race.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-600 hover:text-primary-800 transition-colors"
-            >
-              <ExternalLink className="h-5 w-5" />
-            </a>
-          )}
-        </div>
+      <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+        {/* Image de fond ou logo */}
+        {race.imageUrl && (
+          <div className="relative h-48 w-full">
+            <SafeImage
+              src={race.imageUrl}
+              alt={`Image de ${race.name}`}
+              fill
+              className="object-cover"
+              fallbackSrc="/images/placeholder.svg"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            {race.logoUrl && (
+              <div className="absolute top-4 right-4 bg-white/90 rounded-lg p-2">
+                <SafeImage
+                  src={race.logoUrl}
+                  alt={`Logo de ${race.name}`}
+                  width={60}
+                  height={30}
+                  className="object-contain"
+                  fallbackSrc="/logos/placeholder.svg"
+                />
+              </div>
+            )}
+          </div>
+        )}
+        
+        <div className="p-6">
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex items-center gap-3">
+              {/* Logo seul si pas d'image de fond */}
+              {!race.imageUrl && race.logoUrl && (
+                <div className="flex-shrink-0">
+                  <SafeImage
+                    src={race.logoUrl}
+                    alt={`Logo de ${race.name}`}
+                    width={50}
+                    height={25}
+                    className="object-contain"
+                    fallbackSrc="/logos/placeholder.svg"
+                  />
+                </div>
+              )}
+              <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
+                {race.name}
+              </h3>
+            </div>
+            {race.website && (
+              <a
+                href={race.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 hover:text-primary-800 transition-colors"
+              >
+                <ExternalLink className="h-5 w-5" />
+              </a>
+            )}
+          </div>
 
         {race.description && (
           <p className="text-gray-600 text-sm mb-4 line-clamp-3">
@@ -91,20 +139,26 @@ export function RaceCard({ race }: RaceCardProps) {
           </p>
         )}
 
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-gray-600 text-sm">
-            <MapPin className="h-4 w-4 mr-2" />
-            {race.location}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center text-gray-600 text-sm">
+              <MapPin className="h-4 w-4 mr-2" />
+              {race.location}
+            </div>
+            <div className="flex items-center text-gray-600 text-sm">
+              <Calendar className="h-4 w-4 mr-2" />
+              {formatDate(race.date)}
+            </div>
+            {race.distance && (
+              <div className="flex items-center text-gray-600 text-sm">
+                <Route className="h-4 w-4 mr-2" />
+                {race.distance}
+              </div>
+            )}
+            <div className="flex items-center text-gray-600 text-sm">
+              <Users className="h-4 w-4 mr-2" />
+              {race._count.votes} vote{race._count.votes !== 1 ? 's' : ''}
+            </div>
           </div>
-          <div className="flex items-center text-gray-600 text-sm">
-            <Calendar className="h-4 w-4 mr-2" />
-            {formatDate(race.date)}
-          </div>
-          <div className="flex items-center text-gray-600 text-sm">
-            <Users className="h-4 w-4 mr-2" />
-            {race._count.votes} vote{race._count.votes !== 1 ? 's' : ''}
-          </div>
-        </div>
 
         {race._count.votes > 0 && (
           <div className="mb-4">
@@ -127,26 +181,38 @@ export function RaceCard({ race }: RaceCardProps) {
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-gray-500">
-            Par {race.creator.name}
-          </span>
-          
-          {session ? (
+          <div className="flex flex-col space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-gray-500">
+                Par {race.creator.name}
+              </span>
+              
+              {session ? (
+                <button
+                  onClick={() => setShowVoteModal(true)}
+                  className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+                >
+                  Voter
+                </button>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  className="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm"
+                >
+                  Connectez-vous pour voter
+                </Link>
+              )}
+            </div>
+            
+            {/* Bouton pour voir les commentaires */}
             <button
-              onClick={() => setShowVoteModal(true)}
-              className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+              onClick={() => setShowCommentsModal(true)}
+              className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm"
             >
-              Voter
+              <MessageCircle className="h-4 w-4" />
+              <span>Voir les commentaires</span>
             </button>
-          ) : (
-            <Link
-              href="/auth/signin"
-              className="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm"
-            >
-              Connectez-vous pour voter
-            </Link>
-          )}
+          </div>
         </div>
       </div>
 
@@ -159,6 +225,17 @@ export function RaceCard({ race }: RaceCardProps) {
             // Refresh the page to update ratings
             window.location.reload()
           }}
+        />
+      )}
+
+      {showCommentsModal && (
+        <CommentsModal
+          race={{
+            id: race.id,
+            name: race.name,
+            location: race.location
+          }}
+          onClose={() => setShowCommentsModal(false)}
         />
       )}
     </>

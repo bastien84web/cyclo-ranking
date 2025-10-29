@@ -1,0 +1,25 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="200" fill="url(#mountainGradient)"/>
+  
+  <!-- Mountains -->
+  <polygon points="0,200 100,80 200,120 300,60 400,100 400,200" fill="#1e3a8a" opacity="0.8"/>
+  <polygon points="50,200 150,100 250,140 350,80 400,120 400,200" fill="#1e40af" opacity="0.6"/>
+  
+  <!-- Sun -->
+  <circle cx="320" cy="60" r="25" fill="#fbbf24" opacity="0.9"/>
+  
+  <!-- Text -->
+  <rect x="50" y="150" width="300" height="30" fill="rgba(0,0,0,0.7)" rx="5"/>
+  <text x="200" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="white" font-weight="bold">
+    Image Cyclosportive
+  </text>
+</svg>

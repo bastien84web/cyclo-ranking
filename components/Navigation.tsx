@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { Bike, User, LogOut, Plus } from 'lucide-react'
+import { Bike, User, LogOut, Plus, Settings } from 'lucide-react'
 
 export function Navigation() {
   const { data: session } = useSession()
@@ -26,6 +26,18 @@ export function Navigation() {
                   <Plus className="h-4 w-4" />
                   <span>Ajouter une course</span>
                 </Link>
+                
+                {/* Lien Admin pour l'utilisateur admin */}
+                {session.user?.email === 'admin@cycloranking.com' && (
+                  <Link
+                    href="/admin"
+                    className="flex items-center space-x-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <span>Admin</span>
+                  </Link>
+                )}
+                
                 <div className="flex items-center space-x-2 text-gray-700">
                   <User className="h-5 w-5" />
                   <span>{session.user?.name}</span>

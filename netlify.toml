@@ -4,3 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--production=false"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  node_bundler = "esbuild"

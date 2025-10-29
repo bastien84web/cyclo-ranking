@@ -1,0 +1,5 @@
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="100" fill="#e5e7eb" stroke="#d1d5db" stroke-width="2" rx="8"/>
+  <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#374151" font-weight="bold">TOUR MONT BLANC</text>
+  <text x="100" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#374151">Cyclosportive</text>
+</svg>

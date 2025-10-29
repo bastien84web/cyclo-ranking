@@ -9,7 +9,7 @@ export function Hero() {
             Classement des Courses Cyclosportives
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-primary-100">
-            Votez et découvrez les meilleures courses cyclosportives selon la communauté
+            Votez et découvrez les meilleures courses cyclosportives
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
