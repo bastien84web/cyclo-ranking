@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -14,38 +15,42 @@ const handler = NextAuth({
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.log('Missing credentials')
+            return null
           }
-        })
 
-        if (!user) {
+          const user = await prisma.user.findUnique({
+            where: {
+              email: credentials.email
+            }
+          })
+
+          if (!user) {
+            console.log('User not found:', credentials.email)
+            return null
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
+
+          if (!isPasswordValid) {
+            console.log('Invalid password for user:', credentials.email)
+            return null
+          }
+
+          console.log('User authenticated successfully:', user.email)
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
           return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        // Vérifier si l'email est vérifié (temporairement désactivé pour les tests)
-        // if (!user.emailVerified) {
-        //   throw new Error('Veuillez vérifier votre email avant de vous connecter')
-        // }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
         }
       }
     })
