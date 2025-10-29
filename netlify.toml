@@ -1,5 +1,5 @@
 [build]
-  command = "npx prisma generate --schema=prisma/schema.production.prisma && npx prisma db push --schema=prisma/schema.production.prisma && node scripts/seed-production.js && npm run build"
+  command = "npm run build"
   publish = ".next"
 
 [build.environment]
