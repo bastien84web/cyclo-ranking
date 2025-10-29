@@ -32,15 +32,16 @@ export async function GET() {
       await prisma.$connect()
       dbStatus = 'connected'
       
-      // Compter les utilisateurs et courses
-      userCount = await prisma.user.count()
-      raceCount = await prisma.race.count()
+      // Compter les utilisateurs et courses avec requêtes SQL directes
+      const usersResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM users` as any[]
+      const racesResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM races` as any[]
+      
+      userCount = usersResult[0]?.count || 0
+      raceCount = racesResult[0]?.count || 0
       
       // Vérifier si l'admin existe
-      const admin = await prisma.user.findUnique({
-        where: { email: 'admin@cycloranking.com' }
-      })
-      adminExists = !!admin
+      const adminResult = await prisma.$queryRaw`SELECT email FROM users WHERE email = 'admin@cycloranking.com' LIMIT 1` as any[]
+      adminExists = adminResult.length > 0
       
     } catch (error) {
       dbStatus = `error: ${error instanceof Error ? error.message : 'unknown'}`

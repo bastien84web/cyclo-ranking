@@ -8,19 +8,20 @@ export async function GET() {
     // Test simple de connexion
     await prisma.$queryRaw`SELECT 1 as test`
     
-    // Test de comptage direct
-    const users = await prisma.$queryRaw`SELECT COUNT(*) as count FROM users`
-    const races = await prisma.$queryRaw`SELECT COUNT(*) as count FROM races`
+    // Test de comptage avec conversion en nombre
+    const usersResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM users` as any[]
+    const racesResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM races` as any[]
     
     // Test admin
-    const admin = await prisma.$queryRaw`SELECT email FROM users WHERE email = 'admin@cycloranking.com' LIMIT 1`
+    const adminResult = await prisma.$queryRaw`SELECT email FROM users WHERE email = 'admin@cycloranking.com' LIMIT 1` as any[]
     
     return NextResponse.json({
       status: 'success',
       connection: 'ok',
-      users: users,
-      races: races,
-      admin: admin,
+      users: usersResult[0]?.count || 0,
+      races: racesResult[0]?.count || 0,
+      admin: adminResult.length > 0 ? adminResult[0].email : null,
+      adminExists: adminResult.length > 0,
       timestamp: new Date().toISOString()
     })
     
