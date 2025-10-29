@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
-  let prisma: PrismaClient | null = null
-  
   try {
     // Vérifier les variables d'environnement
     const envCheck = {
@@ -20,35 +18,21 @@ export async function GET() {
     let adminExists = false
 
     try {
-      // Créer une nouvelle instance Prisma pour chaque requête
-      prisma = new PrismaClient({
-        datasources: {
-          db: {
-            url: process.env.DATABASE_URL
-          }
-        }
-      })
-      
-      await prisma.$connect()
+      // Utiliser le singleton Prisma global
       dbStatus = 'connected'
       
-      // Compter les utilisateurs et courses avec requêtes SQL directes
-      const usersResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM users` as any[]
-      const racesResult = await prisma.$queryRaw`SELECT COUNT(*)::int as count FROM races` as any[]
-      
-      userCount = usersResult[0]?.count || 0
-      raceCount = racesResult[0]?.count || 0
+      // Utiliser les méthodes Prisma normales
+      userCount = await prisma.user.count()
+      raceCount = await prisma.race.count()
       
       // Vérifier si l'admin existe
-      const adminResult = await prisma.$queryRaw`SELECT email FROM users WHERE email = 'admin@cycloranking.com' LIMIT 1` as any[]
-      adminExists = adminResult.length > 0
+      const admin = await prisma.user.findUnique({
+        where: { email: 'admin@cycloranking.com' }
+      })
+      adminExists = !!admin
       
     } catch (error) {
       dbStatus = `error: ${error instanceof Error ? error.message : 'unknown'}`
-    } finally {
-      if (prisma) {
-        await prisma.$disconnect()
-      }
     }
 
     return NextResponse.json({
