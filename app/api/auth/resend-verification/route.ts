@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
-// Utiliser la version dev si les ports SMTP sont bloqués
-import { sendVerificationEmail, generateVerificationToken } from '@/lib/email-dev'
+import { sendVerificationEmail, generateVerificationToken } from '@/lib/email'
 
 const prisma = new PrismaClient()
 
