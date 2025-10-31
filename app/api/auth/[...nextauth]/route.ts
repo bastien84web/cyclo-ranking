@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
@@ -8,6 +9,10 @@ const prisma = new PrismaClient()
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -32,14 +37,17 @@ const handler = NextAuth({
             return null
           }
 
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          )
+          // Skip password check for Google users (they don't have a password)
+          if (user.password) {
+            const isPasswordValid = await bcrypt.compare(
+              credentials.password,
+              user.password
+            )
 
-          if (!isPasswordValid) {
-            console.log('Invalid password for user:', credentials.email)
-            return null
+            if (!isPasswordValid) {
+              console.log('Invalid password for user:', credentials.email)
+              return null
+            }
           }
 
           console.log('User authenticated successfully:', user.email)
@@ -59,6 +67,32 @@ const handler = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        try {
+          // Check if user already exists
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email! }
+          })
+
+          if (!existingUser) {
+            // Create new user for Google sign-in
+            await prisma.user.create({
+              data: {
+                email: user.email!,
+                name: user.name!,
+                password: '', // Empty password for Google users
+                emailVerified: new Date(), // Google users are pre-verified
+              }
+            })
+          }
+        } catch (error) {
+          console.error('Error creating Google user:', error)
+          return false
+        }
+      }
+      return true
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id

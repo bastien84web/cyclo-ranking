@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
+import { moderateComment } from '@/lib/moderation'
 
 const prisma = new PrismaClient()
 
@@ -75,14 +76,45 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Modération automatique du commentaire
+    let moderatedComment = voteData.comment
+    let moderationWarnings: string[] = []
+    
+    if (voteData.comment && voteData.comment.trim().length > 0) {
+      const moderationResult = moderateComment(voteData.comment)
+      
+      if (!moderationResult.isApproved) {
+        return NextResponse.json(
+          { 
+            error: 'Commentaire refusé par la modération automatique',
+            reasons: moderationResult.reasons,
+            suggestions: moderationResult.suggestions,
+            score: moderationResult.score
+          },
+          { status: 400 }
+        )
+      }
+      
+      // Si le commentaire a un score faible mais est approuvé, ajouter des avertissements
+      if (moderationResult.score < 80) {
+        moderationWarnings = moderationResult.reasons
+      }
+    }
+
     const vote = await prisma.vote.create({
       data: {
         userId: user.id,
         ...voteData,
+        comment: moderatedComment,
       }
     })
 
-    return NextResponse.json(vote)
+    const response = {
+      ...vote,
+      moderationWarnings: moderationWarnings.length > 0 ? moderationWarnings : undefined
+    }
+
+    return NextResponse.json(response)
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
