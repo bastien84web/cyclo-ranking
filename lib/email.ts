@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer'
 // Configuration du transporteur email
 const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_SERVER_HOST || 'smtp.sendgrid.net',
+  host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
   port: port,
   secure: port === 465, // true pour 465 (SSL), false pour 587 (TLS)
   auth: {
-    user: process.env.EMAIL_SERVER_USER || 'apikey',
+    user: process.env.EMAIL_SERVER_USER,
     pass: process.env.EMAIL_SERVER_PASSWORD,
   },
 })
