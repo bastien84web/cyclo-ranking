@@ -61,18 +61,10 @@ export default function SignUp() {
         throw new Error(data.error || 'Erreur lors de la création du compte')
       }
 
-      // Auto-login after successful registration
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError('Compte créé mais erreur de connexion')
-      } else {
-        router.push('/')
-      }
+      // Ne pas se connecter automatiquement, rediriger vers une page d'information
+      setError(null)
+      alert('Compte créé avec succès ! Un email de vérification a été envoyé. Vérifiez votre boîte mail avant de vous connecter.')
+      router.push('/auth/signin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue')
     } finally {

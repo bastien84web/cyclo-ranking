@@ -37,6 +37,12 @@ const handler = NextAuth({
             return null
           }
 
+          // Check if email is verified (except for Google users who are pre-verified)
+          if (!user.emailVerified && user.password) {
+            console.log('Email not verified for user:', credentials.email)
+            return null
+          }
+
           // Skip password check for Google users (they don't have a password)
           if (user.password) {
             const isPasswordValid = await bcrypt.compare(

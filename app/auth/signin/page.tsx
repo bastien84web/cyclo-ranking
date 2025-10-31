@@ -12,6 +12,9 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showResendButton, setShowResendButton] = useState(false)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendMessage, setResendMessage] = useState<string | null>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +30,26 @@ export default function SignIn() {
       })
 
       if (result?.error) {
-        setError('Email ou mot de passe incorrect')
+        // Vérifier si c'est un problème de vérification email
+        const response = await fetch('/api/auth/check-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          if (!data.isVerified) {
+            setError('Votre email n\'est pas encore vérifié. Vérifiez votre boîte mail et cliquez sur le lien de vérification.')
+            setShowResendButton(true)
+          } else {
+            setError('Email ou mot de passe incorrect')
+            setShowResendButton(false)
+          }
+        } else {
+          setError('Email ou mot de passe incorrect')
+          setShowResendButton(false)
+        }
       } else {
         const session = await getSession()
         if (session) {
@@ -38,6 +60,32 @@ export default function SignIn() {
       setError('Une erreur est survenue')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    setResendLoading(true)
+    setResendMessage(null)
+
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setResendMessage('Email de vérification renvoyé ! Vérifiez votre boîte mail.')
+        setShowResendButton(false)
+      } else {
+        setResendMessage(data.error || 'Erreur lors du renvoi')
+      }
+    } catch (err) {
+      setResendMessage('Erreur lors du renvoi de l\'email')
+    } finally {
+      setResendLoading(false)
     }
   }
 
@@ -66,6 +114,24 @@ export default function SignIn() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+              {showResendButton && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={resendLoading}
+                    className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {resendLoading ? 'Envoi...' : 'Renvoyer l\'email de vérification'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {resendMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              {resendMessage}
             </div>
           )}
           

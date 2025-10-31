@@ -44,6 +44,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Vérifier que l'email est vérifié (sauf pour les utilisateurs Google)
+    if (!user.emailVerified && user.password) {
+      return NextResponse.json(
+        { error: 'Vous devez vérifier votre email avant de pouvoir voter' },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const voteData = voteSchema.parse(body)
 
