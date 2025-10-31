@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer'
 // Configuration du transporteur email
 const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
+  host: process.env.EMAIL_SERVER_HOST || 'smtp.sendgrid.net',
   port: port,
   secure: port === 465, // true pour 465 (SSL), false pour 587 (TLS)
   auth: {
-    user: process.env.EMAIL_SERVER_USER,
+    user: process.env.EMAIL_SERVER_USER || 'apikey',
     pass: process.env.EMAIL_SERVER_PASSWORD,
   },
 })
@@ -16,7 +16,7 @@ export async function sendVerificationEmail(email: string, token: string) {
   const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`
   
   const mailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_SERVER_USER,
+    from: `"Cyclo Ranking" <${process.env.EMAIL_FROM || 'noreply@cycloranking.com'}>`,
     to: email,
     subject: 'Vérifiez votre adresse email - Cyclo Ranking',
     html: `
