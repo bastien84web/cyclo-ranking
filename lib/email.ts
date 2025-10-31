@@ -10,23 +10,25 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_SERVER_USER,
     pass: process.env.EMAIL_SERVER_PASSWORD,
   },
+  // Forcer l'utilisation de l'adresse FROM personnalisée
+  from: process.env.EMAIL_FROM || 'noreply@meilleures-cyclosportives.com',
 })
 
 export async function sendVerificationEmail(email: string, token: string) {
   const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`
   
   const mailOptions = {
-    from: `"Cyclo Ranking" <${process.env.EMAIL_FROM || 'noreply@cycloranking.com'}>`,
+    from: `"Meilleures Cyclosportives" <${process.env.EMAIL_FROM || 'noreply@meilleures-cyclosportives.com'}>`,
     to: email,
-    subject: 'Vérifiez votre adresse email - Cyclo Ranking',
+    subject: 'Vérifiez votre adresse email - Meilleures Cyclosportives',
     html: `
       <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px;">🚴‍♂️ Cyclo Ranking</h1>
+          <h1 style="color: white; margin: 0; font-size: 28px;">🚴‍♂️ Meilleures Cyclosportives</h1>
         </div>
         
         <div style="padding: 40px 30px; background: #f8f9fa;">
-          <h2 style="color: #333; margin-bottom: 20px;">Bienvenue sur Cyclo Ranking !</h2>
+          <h2 style="color: #333; margin-bottom: 20px;">Bienvenue sur Meilleures Cyclosportives !</h2>
           
           <p style="color: #666; font-size: 16px; line-height: 1.6;">
             Merci de vous être inscrit sur notre plateforme de classement des courses cyclosportives.
@@ -62,13 +64,13 @@ export async function sendVerificationEmail(email: string, token: string) {
         
         <div style="background: #333; padding: 20px; text-align: center;">
           <p style="color: #999; margin: 0; font-size: 14px;">
-            © 2025 Cyclo Ranking - Plateforme de classement des courses cyclosportives
+            © 2025 Meilleures Cyclosportives - Plateforme de classement des courses cyclosportives
           </p>
         </div>
       </div>
     `,
     text: `
-      Bienvenue sur Cyclo Ranking !
+      Bienvenue sur Meilleures Cyclosportives !
       
       Merci de vous être inscrit sur notre plateforme de classement des courses cyclosportives.
       
@@ -77,7 +79,7 @@ export async function sendVerificationEmail(email: string, token: string) {
       
       Ce lien expirera dans 24 heures.
       
-      © 2025 Cyclo Ranking
+      © 2025 Meilleures Cyclosportives
     `
   }
 
