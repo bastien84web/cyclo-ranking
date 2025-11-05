@@ -8,14 +8,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Récupérer tous les votes avec commentaires pour cette course
-    const votes = await prisma.vote.findMany({
+    // Récupérer TOUS les votes pour cette course (avec et sans commentaires)
+    const allVotes = await prisma.vote.findMany({
       where: {
-        raceId: params.id,
-        AND: [
-          { comment: { not: null } },
-          { comment: { not: '' } }
-        ]
+        raceId: params.id
       },
       include: {
         user: {
@@ -24,11 +20,19 @@ export async function GET(
             email: true
           }
         }
-      },
-      orderBy: {
-        createdAt: 'desc'
       }
     })
+
+    // Séparer les votes avec et sans commentaires
+    const votesAvecCommentaires = allVotes.filter(vote => vote.comment && vote.comment.trim() !== '')
+    const votesSansCommentaires = allVotes.filter(vote => !vote.comment || vote.comment.trim() === '')
+
+    // Trier par date décroissante
+    votesAvecCommentaires.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    votesSansCommentaires.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+
+    // Combiner : d'abord avec commentaires, puis sans commentaires
+    const votes = [...votesAvecCommentaires, ...votesSansCommentaires]
 
     // Formater les données pour l'affichage
     const comments = votes.map(vote => ({

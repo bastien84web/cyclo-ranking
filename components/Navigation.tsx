@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { Bike, User, LogOut, Plus, Settings } from 'lucide-react'
+import { Bike, User, LogOut, Plus, Settings, Map } from 'lucide-react'
 
 export function Navigation() {
   const { data: session } = useSession()
@@ -11,10 +11,20 @@ export function Navigation() {
     <nav className="bg-white shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center space-x-2 text-xl font-bold text-primary-600">
-            <Bike className="h-8 w-8" />
-            <span>Cyclo Ranking</span>
-          </Link>
+          <div className="flex items-center space-x-6">
+            <Link href="/" className="flex items-center space-x-2 text-xl font-bold text-primary-600">
+              <Bike className="h-8 w-8" />
+              <span>Cyclo Ranking</span>
+            </Link>
+            
+            <Link
+              href="/carte"
+              className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-colors font-medium"
+            >
+              <Map className="h-5 w-5" />
+              <span>Carte</span>
+            </Link>
+          </div>
 
           <div className="flex items-center space-x-4">
             {session ? (
