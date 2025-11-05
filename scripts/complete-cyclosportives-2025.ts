@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import * as dotenv from 'dotenv'
-import * as path from 'path'
 
-dotenv.config({ path: path.join(__dirname, '..', '.env.local') })
+// Les variables d'environnement sont chargées par dotenv-cli
+// Utiliser: npx dotenv -e .env.production -- npm run db:complete-cyclosportives-2025
+
+console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50) + '...')
 
 const prisma = new PrismaClient()
 
@@ -290,15 +291,18 @@ async function main() {
   // Supprimer données existantes
   await prisma.vote.deleteMany()
   await prisma.race.deleteMany()
+  await prisma.user.deleteMany()
   
-  const adminUser = await prisma.user.findFirst({
-    where: { email: 'admin@cycloranking.com' }
+  // Créer l'admin
+  const hashedAdminPassword = await bcrypt.hash('admin123', 10)
+  const adminUser = await prisma.user.create({
+    data: {
+      email: 'admin@cycloranking.com',
+      name: 'Admin',
+      password: hashedAdminPassword
+    }
   })
-  
-  if (!adminUser) {
-    console.error('❌ Admin non trouvé')
-    return
-  }
+  console.log('✅ Admin créé')
   
   // Créer cyclosportives avec URLs vérifiées
   console.log('\n🏁 Création des cyclosportives...')
@@ -338,12 +342,31 @@ async function main() {
   
   console.log(`\n✅ ${coursesCreees.length} cyclosportives créées`)
   
-  // Créer utilisateurs
-  const utilisateurs = await prisma.user.findMany({
-    where: { email: { not: 'admin@cycloranking.com' } }
-  })
+  // Créer 200 utilisateurs de test
+  console.log('\n👥 Création des utilisateurs...')
+  const prenoms = ['Jean', 'Pierre', 'Marie', 'Sophie', 'Luc', 'Paul', 'Julie', 'Anne', 'Marc', 'Claire']
+  const noms = ['Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau']
+  const domaines = ['gmail.com', 'orange.fr', 'free.fr', 'hotmail.fr', 'wanadoo.fr']
+  const hashedPassword = await bcrypt.hash('password123', 10)
   
-  console.log(`👥 ${utilisateurs.length} utilisateurs disponibles`)
+  const utilisateurs = []
+  for (let i = 0; i < 200; i++) {
+    const prenom = prenoms[Math.floor(Math.random() * prenoms.length)]
+    const nom = noms[Math.floor(Math.random() * noms.length)]
+    const domaine = domaines[Math.floor(Math.random() * domaines.length)]
+    const email = `${prenom.toLowerCase()}.${nom.toLowerCase()}${i}@${domaine}`
+    
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name: `${prenom} ${nom}`,
+        password: hashedPassword
+      }
+    })
+    utilisateurs.push(user)
+  }
+  
+  console.log(`👥 ${utilisateurs.length} utilisateurs créés`)
   
   // Générer votes et commentaires
   console.log('\n📝 Génération votes et commentaires...')
