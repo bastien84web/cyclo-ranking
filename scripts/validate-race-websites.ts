@@ -10,10 +10,15 @@ const prisma = new PrismaClient()
 // Function to check if a URL is valid and accessible
 async function validateUrl(url: string): Promise<boolean> {
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
+    
     const response = await fetch(url, {
       method: 'HEAD',
-      timeout: 10000, // 10 seconds timeout
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId)
     return response.ok
   } catch (error) {
     console.log(`❌ URL non accessible: ${url}`)
