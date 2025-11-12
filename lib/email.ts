@@ -1,18 +1,31 @@
+import { Resend } from 'resend'
 import nodemailer from 'nodemailer'
 
-// Configuration du transporteur email
-const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
-  port: port,
-  secure: port === 465, // true pour 465 (SSL), false pour 587 (TLS)
-  auth: {
-    user: process.env.EMAIL_SERVER_USER,
-    pass: process.env.EMAIL_SERVER_PASSWORD,
-  },
-  // Forcer l'utilisation de l'adresse FROM personnalisée
-  from: process.env.EMAIL_FROM || 'noreply@meilleures-cyclosportives.com',
-})
+// Lazy initialization pour supporter les variables d'environnement chargées dynamiquement
+function getResendClient() {
+  if (process.env.RESEND_API_KEY) {
+    return new Resend(process.env.RESEND_API_KEY)
+  }
+  return null
+}
+
+function getNodemailerTransporter() {
+  if (!process.env.EMAIL_SERVER_HOST) {
+    return null
+  }
+  
+  const port = parseInt(process.env.EMAIL_SERVER_PORT || '587')
+  return nodemailer.createTransport({
+    host: process.env.EMAIL_SERVER_HOST,
+    port: port,
+    secure: port === 465,
+    auth: {
+      user: process.env.EMAIL_SERVER_USER,
+      pass: process.env.EMAIL_SERVER_PASSWORD,
+    },
+    from: process.env.EMAIL_FROM || 'noreply@meilleures-cyclosportives.com',
+  })
+}
 
 export async function sendVerificationEmail(email: string, token: string) {
   const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify-email?token=${token}`
@@ -84,11 +97,31 @@ export async function sendVerificationEmail(email: string, token: string) {
   }
 
   try {
-    await transporter.sendMail(mailOptions)
-    console.log('Email de vérification envoyé à:', email)
+    const resend = getResendClient()
+    
+    if (resend) {
+      // Utiliser Resend
+      console.log('🔄 Tentative d\'envoi via Resend API...')
+      const result = await resend.emails.send({
+        from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        to: email,
+        subject: mailOptions.subject,
+        html: mailOptions.html,
+      })
+      console.log('📧 Réponse Resend:', JSON.stringify(result, null, 2))
+      console.log('✅ Email de vérification envoyé via Resend à:', email)
+    } else {
+      // Fallback sur nodemailer
+      const transporter = getNodemailerTransporter()
+      if (!transporter) {
+        throw new Error('Aucun service email configuré (RESEND_API_KEY ou EMAIL_SERVER_HOST)')
+      }
+      await transporter.sendMail(mailOptions)
+      console.log('✅ Email de vérification envoyé via SMTP à:', email)
+    }
     return true
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email:', error)
+    console.error('❌ Erreur lors de l\'envoi de l\'email:', error)
     return false
   }
 }

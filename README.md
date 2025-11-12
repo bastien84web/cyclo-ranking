@@ -19,9 +19,12 @@ Une application web moderne pour voter et classer les courses cyclosportives sel
 
 - **Frontend** : Next.js 14, React, TypeScript, Tailwind CSS
 - **Backend** : Next.js API Routes
-- **Base de données** : SQLite avec Prisma ORM
+- **Base de données** : PostgreSQL (Supabase) avec Prisma ORM
 - **Authentification** : NextAuth.js
+- **Emails** : Resend (avec fallback Gmail SMTP)
+- **Cartes** : Leaflet / React-Leaflet
 - **Icônes** : Lucide React
+- **Déploiement** : Netlify
 
 ## Installation
 
@@ -36,26 +39,33 @@ cd cyclo-ranking
 npm install
 ```
 
-3. **Configurer la base de données** :
-```bash
-npx prisma generate
-npx prisma db push
-```
+3. **Configurer les variables d'environnement** :
+Créer un fichier `.env.local` (voir `.env.example`) :
+```env
+# Database (Supabase PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:5432/database"
 
-4. **Configurer les variables d'environnement** :
-Créer un fichier `.env.local` avec :
-```
-DATABASE_URL="file:./dev.db"
+# NextAuth
 NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
+
+# Email (Resend)
+RESEND_API_KEY="re_your_api_key"
+EMAIL_FROM="noreply@meilleures-cyclosportive.com"
 ```
 
-5. **Lancer l'application** :
+4. **Configurer la base de données** :
+```bash
+npm run db:push
+npm run db:complete-cyclosportives-2025
+```
+
+5. **Lancer le serveur de développement** :
 ```bash
 npm run dev
 ```
 
-L'application sera accessible sur `http://localhost:3000`
+L'application sera accessible sur **http://localhost:3000** 🚀
 
 ## Structure du projet
 
