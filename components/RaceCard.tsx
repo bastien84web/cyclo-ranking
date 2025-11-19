@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, Calendar, Users, Star, ExternalLink, Route, MessageCircle } from 'lucide-react'
+import { MapPin, Calendar, Users, Star, ExternalLink, Route, MessageCircle, Edit } from 'lucide-react'
 import { VoteModal } from './VoteModal'
 import { CommentsModal } from './CommentsModal'
+import { EditRaceModal } from './EditRaceModal'
 import { SafeImage } from './SafeImage'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -44,6 +45,7 @@ export function RaceCard({ race }: RaceCardProps) {
   const { data: session } = useSession()
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [showCommentsModal, setShowCommentsModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -121,16 +123,27 @@ export function RaceCard({ race }: RaceCardProps) {
                 {race.name}
               </h3>
             </div>
-            {race.website && (
-              <a
-                href={race.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-600 hover:text-primary-800 transition-colors"
-              >
-                <ExternalLink className="h-5 w-5" />
-              </a>
-            )}
+            <div className="flex items-center gap-2">
+              {session && (
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                  title="Modifier la cyclosportive"
+                >
+                  <Edit className="h-5 w-5" />
+                </button>
+              )}
+              {race.website && (
+                <a
+                  href={race.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-600 hover:text-primary-800 transition-colors"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                </a>
+              )}
+            </div>
           </div>
 
         {race.description && (
@@ -236,6 +249,18 @@ export function RaceCard({ race }: RaceCardProps) {
             location: race.location
           }}
           onClose={() => setShowCommentsModal(false)}
+        />
+      )}
+
+      {showEditModal && (
+        <EditRaceModal
+          race={race}
+          onClose={() => setShowEditModal(false)}
+          onRaceUpdated={() => {
+            setShowEditModal(false)
+            // Refresh the page to update the race information
+            window.location.reload()
+          }}
         />
       )}
     </>

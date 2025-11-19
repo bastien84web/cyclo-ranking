@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth'
+import { z } from 'zod'
 
 const prisma = new PrismaClient()
+
+const updateRaceSchema = z.object({
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères').optional(),
+  description: z.string().optional(),
+  location: z.string().min(2, 'La localisation est requise').optional(),
+  date: z.string().transform((str) => new Date(str)).optional(),
+  distance: z.string().optional(),
+  website: z.string().url().optional().or(z.literal('')).optional(),
+  logoUrl: z.string().url().optional().or(z.literal('')).optional(),
+  imageUrl: z.string().url().optional().or(z.literal('')).optional(),
+})
 
 export async function PATCH(
   request: NextRequest,
@@ -11,25 +23,28 @@ export async function PATCH(
   try {
     const session = await getServerSession()
     
-    // Vérifier que l'utilisateur est connecté et est admin
-    if (!session?.user?.email || session.user.email !== 'admin@cycloranking.com') {
+    // Vérifier que l'utilisateur est connecté
+    if (!session?.user?.email) {
       return NextResponse.json(
-        { error: 'Accès non autorisé' },
-        { status: 403 }
+        { error: 'Vous devez être connecté pour modifier une course' },
+        { status: 401 }
+      )
+    }
+
+    // Vérifier que l'utilisateur existe dans la base de données
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Utilisateur non trouvé' },
+        { status: 404 }
       )
     }
 
     const body = await request.json()
-    const { 
-      name, 
-      description, 
-      location, 
-      date, 
-      distance, 
-      website, 
-      logoUrl, 
-      imageUrl 
-    } = body
+    const validatedData = updateRaceSchema.parse(body)
 
     // Vérifier que la course existe
     const existingRace = await prisma.race.findUnique({
@@ -46,14 +61,14 @@ export async function PATCH(
     // Préparer les données à mettre à jour (seulement les champs fournis)
     const updateData: any = {}
     
-    if (name !== undefined) updateData.name = name
-    if (description !== undefined) updateData.description = description
-    if (location !== undefined) updateData.location = location
-    if (date !== undefined) updateData.date = new Date(date)
-    if (distance !== undefined) updateData.distance = distance
-    if (website !== undefined) updateData.website = website || null
-    if (logoUrl !== undefined) updateData.logoUrl = logoUrl || null
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null
+    if (validatedData.name !== undefined) updateData.name = validatedData.name
+    if (validatedData.description !== undefined) updateData.description = validatedData.description
+    if (validatedData.location !== undefined) updateData.location = validatedData.location
+    if (validatedData.date !== undefined) updateData.date = validatedData.date
+    if (validatedData.distance !== undefined) updateData.distance = validatedData.distance
+    if (validatedData.website !== undefined) updateData.website = validatedData.website || null
+    if (validatedData.logoUrl !== undefined) updateData.logoUrl = validatedData.logoUrl || null
+    if (validatedData.imageUrl !== undefined) updateData.imageUrl = validatedData.imageUrl || null
 
     // Mettre à jour la course
     const updatedRace = await prisma.race.update({
@@ -71,6 +86,13 @@ export async function PATCH(
 
     return NextResponse.json(updatedRace)
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.errors[0].message },
+        { status: 400 }
+      )
+    }
+
     console.error('Erreur lors de la mise à jour de la course:', error)
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
