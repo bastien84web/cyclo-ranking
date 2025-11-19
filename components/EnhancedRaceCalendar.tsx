@@ -202,7 +202,7 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
             {showCalendar2026 && (
               <p className="text-gray-600 max-w-2xl mx-auto text-center mb-6">
                 Dates estimées basées sur les cyclosportives 2025. 
-                Les dates correspondent au dimanche le plus proche de la date 2025.
+                Chers organisateurs, vous pouvez modifier la date en vous connectant.
               </p>
             )}
 
@@ -447,7 +447,7 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
             <div className="mt-8 p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800 text-center">
                 <strong>Note :</strong> Ces dates sont des estimations basées sur les cyclosportives 2025. 
-                Les organisateurs peuvent modifier les dates réelles. Consultez les sites officiels pour confirmation.
+                Chers organisateurs, vous pouvez modifier la date en vous connectant. Consultez les sites officiels pour confirmation.
               </p>
             </div>
           )}
