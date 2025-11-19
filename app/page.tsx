@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client'
-import { RaceList } from '@/components/RaceList'
 import { Hero } from '@/components/Hero'
 import { HomeMapSection } from '@/components/HomeMapSection'
 import { StructuredData } from '@/components/StructuredData'
-import { Calendar2026 } from '@/components/Calendar2026'
+import { EnhancedRaceCalendar } from '@/components/EnhancedRaceCalendar'
 
 const prisma = new PrismaClient()
 
@@ -61,10 +60,10 @@ export default async function Home() {
       
       <HomeMapSection races={races} />
 
-      <Calendar2026 races={races} />
+      <EnhancedRaceCalendar />
 
-      <div className="container mx-auto px-4 py-8">
-        <RaceList />
+      <div className="border-t border-gray-200 mt-8">
+        <EnhancedRaceCalendar showCalendar2026={true} />
       </div>
 
       {/* Section FAQ SEO */}
