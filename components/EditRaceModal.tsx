@@ -238,8 +238,8 @@ export function EditRaceModal({ race, onClose, onRaceUpdated }: EditRaceModalPro
             </p>
             {formData.imageUrl && (
               <div className="mt-2">
-                <p className="text-xs text-gray-600 mb-1">Aperçu :</p>
-                <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+                <p className="text-xs text-gray-600 mb-1">Aperçu (taille réelle dans le calendrier) :</p>
+                <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-gray-200 shadow-sm">
                   <img
                     src={formData.imageUrl}
                     alt="Aperçu de l'image"

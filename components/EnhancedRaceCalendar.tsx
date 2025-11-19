@@ -287,9 +287,9 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
                   <div className="space-y-4">
                     {racesByMonth[month].map(race => (
                       <div key={race.id} className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow relative overflow-hidden">
-                        {/* Image d'événement en haut à droite */}
+                        {/* Image d'événement en haut à droite - Plus grande */}
                         {race.imageUrl && (
-                          <div className="absolute top-2 right-2 w-12 h-12 rounded-lg overflow-hidden shadow-sm border border-white z-10">
+                          <div className="absolute top-3 right-3 w-20 h-20 rounded-xl overflow-hidden shadow-lg border-2 border-white z-10">
                             <SafeImage
                               src={race.imageUrl}
                               alt={`Image de ${race.name}`}
@@ -302,7 +302,7 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
                         
                         <div className="p-4">
                           {/* En-tête avec logo et actions */}
-                          <div className="flex justify-between items-start mb-3 pr-14">
+                          <div className="flex justify-between items-start mb-3 pr-24">
                             <div className="flex items-center gap-2 flex-1">
                               {race.logoUrl && (
                                 <div className="flex-shrink-0">
