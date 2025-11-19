@@ -218,11 +218,11 @@ export function EditRaceModal({ race, onClose, onRaceUpdated }: EditRaceModalPro
             />
           </div>
 
-          {/* URL de l'image */}
+          {/* URL de l'image d'événement */}
           <div>
             <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
               <Image className="h-4 w-4 inline mr-2" />
-              URL de l'image
+              URL de l'image d'événement
             </label>
             <input
               type="url"
@@ -231,8 +231,27 @@ export function EditRaceModal({ race, onClose, onRaceUpdated }: EditRaceModalPro
               value={formData.imageUrl}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="https://..."
+              placeholder="https://example.com/image-cyclosportive.jpg"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Cette image apparaîtra comme icône en haut à droite de la carte dans le calendrier
+            </p>
+            {formData.imageUrl && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-600 mb-1">Aperçu :</p>
+                <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+                  <img
+                    src={formData.imageUrl}
+                    alt="Aperçu de l'image"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Boutons */}

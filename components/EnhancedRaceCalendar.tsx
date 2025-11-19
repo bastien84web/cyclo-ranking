@@ -286,50 +286,64 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
                   </h3>
                   <div className="space-y-4">
                     {racesByMonth[month].map(race => (
-                      <div key={race.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                        {/* En-tête avec logo et actions */}
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center gap-2 flex-1">
-                            {race.logoUrl && (
-                              <div className="flex-shrink-0">
-                                <SafeImage
-                                  src={race.logoUrl}
-                                  alt={`Logo de ${race.name}`}
-                                  width={30}
-                                  height={15}
-                                  className="object-contain"
-                                  fallbackSrc="/logos/placeholder.svg"
-                                />
-                              </div>
-                            )}
-                            <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">
-                              {race.name}
-                            </h4>
+                      <div key={race.id} className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow relative overflow-hidden">
+                        {/* Image d'événement en haut à droite */}
+                        {race.imageUrl && (
+                          <div className="absolute top-2 right-2 w-12 h-12 rounded-lg overflow-hidden shadow-sm border border-white z-10">
+                            <SafeImage
+                              src={race.imageUrl}
+                              alt={`Image de ${race.name}`}
+                              fill
+                              className="object-cover"
+                              fallbackSrc="/images/placeholder.svg"
+                            />
                           </div>
-                          
-                          <div className="flex items-center gap-1 ml-2">
-                            {session && (
-                              <button
-                                onClick={() => setShowEditModal(race.id)}
-                                className="text-gray-400 hover:text-blue-600 transition-colors p-1"
-                                title="Modifier"
-                              >
-                                <Edit className="h-3 w-3" />
-                              </button>
-                            )}
-                            {race.website && (
-                              <a
-                                href={race.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-blue-600 transition-colors p-1"
-                                title="Site web"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            )}
+                        )}
+                        
+                        <div className="p-4">
+                          {/* En-tête avec logo et actions */}
+                          <div className="flex justify-between items-start mb-3 pr-14">
+                            <div className="flex items-center gap-2 flex-1">
+                              {race.logoUrl && (
+                                <div className="flex-shrink-0">
+                                  <SafeImage
+                                    src={race.logoUrl}
+                                    alt={`Logo de ${race.name}`}
+                                    width={30}
+                                    height={15}
+                                    className="object-contain"
+                                    fallbackSrc="/logos/placeholder.svg"
+                                  />
+                                </div>
+                              )}
+                              <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                                {race.name}
+                              </h4>
+                            </div>
+                            
+                            <div className="flex items-center gap-1 ml-2">
+                              {session && (
+                                <button
+                                  onClick={() => setShowEditModal(race.id)}
+                                  className="text-gray-400 hover:text-blue-600 transition-colors p-1"
+                                  title="Modifier"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </button>
+                              )}
+                              {race.website && (
+                                <a
+                                  href={race.website}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-gray-400 hover:text-blue-600 transition-colors p-1"
+                                  title="Site web"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                </a>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
                         {/* Informations de base */}
                         <div className="space-y-2 mb-3">
@@ -387,36 +401,37 @@ export function EnhancedRaceCalendar({ showCalendar2026 = false }: EnhancedRaceC
                           </p>
                         )}
 
-                        {/* Actions */}
-                        <div className="flex flex-col gap-2">
-                          <div className="flex justify-between items-center text-xs">
-                            <span className="text-gray-500">Par {race.creator.name}</span>
-                          </div>
-                          
-                          <div className="flex gap-2">
-                            {session ? (
-                              <button
-                                onClick={() => setShowVoteModal(race.id)}
-                                className="flex-1 bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
-                              >
-                                Voter
-                              </button>
-                            ) : (
-                              <Link
-                                href="/auth/signin"
-                                className="flex-1 bg-gray-300 text-gray-600 px-2 py-1 rounded text-xs text-center"
-                              >
-                                Se connecter
-                              </Link>
-                            )}
+                          {/* Actions */}
+                          <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-gray-500">Par {race.creator.name}</span>
+                            </div>
                             
-                            <button
-                              onClick={() => setShowCommentsModal(race.id)}
-                              className="flex-1 flex items-center justify-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs hover:bg-gray-200 transition-colors"
-                            >
-                              <MessageCircle className="h-3 w-3" />
-                              <span>Avis</span>
-                            </button>
+                            <div className="flex gap-2">
+                              {session ? (
+                                <button
+                                  onClick={() => setShowVoteModal(race.id)}
+                                  className="flex-1 bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
+                                >
+                                  Voter
+                                </button>
+                              ) : (
+                                <Link
+                                  href="/auth/signin"
+                                  className="flex-1 bg-gray-300 text-gray-600 px-2 py-1 rounded text-xs text-center"
+                                >
+                                  Se connecter
+                                </Link>
+                              )}
+                              
+                              <button
+                                onClick={() => setShowCommentsModal(race.id)}
+                                className="flex-1 flex items-center justify-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs hover:bg-gray-200 transition-colors"
+                              >
+                                <MessageCircle className="h-3 w-3" />
+                                <span>Avis</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

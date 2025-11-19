@@ -27,7 +27,8 @@
     "db:fix-data": "tsx scripts/fix-data.ts",
     "db:reset-valid-races": "tsx scripts/reset-with-valid-races.ts",
     "db:add-missing-races": "tsx scripts/add-missing-races.ts",
-    "db:generate-reviews": "tsx scripts/generate-reviews.ts"
+    "db:generate-reviews": "tsx scripts/generate-reviews.ts",
+    "db:add-race-images": "tsx scripts/add-race-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
