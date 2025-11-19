@@ -60,11 +60,7 @@ export default async function Home() {
       
       <HomeMapSection races={races} />
 
-      <EnhancedRaceCalendar />
-
-      <div className="border-t border-gray-200 mt-8">
-        <EnhancedRaceCalendar showCalendar2026={true} />
-      </div>
+      <EnhancedRaceCalendar showCalendar2026={true} />
 
       {/* Section FAQ SEO */}
       <section className="bg-gray-50 py-12">
