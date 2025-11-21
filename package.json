@@ -28,7 +28,16 @@
     "db:reset-valid-races": "tsx scripts/reset-with-valid-races.ts",
     "db:add-missing-races": "tsx scripts/add-missing-races.ts",
     "db:generate-reviews": "tsx scripts/generate-reviews.ts",
-    "db:add-race-images": "tsx scripts/add-race-images.ts"
+    "db:add-race-images": "tsx scripts/add-race-images.ts",
+    "db:fetch-race-data": "tsx scripts/fetch-race-data.ts",
+    "db:search-websites": "tsx scripts/search-race-websites.ts",
+    "db:web-search-races": "tsx scripts/web-search-races.ts",
+    "db:auto-search-races": "tsx scripts/auto-search-races.ts",
+    "db:extract-real-images": "tsx scripts/extract-real-images.ts",
+    "db:real-image-extractor": "tsx scripts/real-image-extractor.ts",
+    "db:extract-official-images": "tsx scripts/extract-official-images.ts",
+    "db:process-all-races": "tsx scripts/process-all-races.ts",
+    "db:complete-race-processor": "tsx scripts/complete-race-processor.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
